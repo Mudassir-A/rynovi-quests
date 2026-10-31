@@ -5,34 +5,56 @@ as clean Pydantic models, and turn the bad ones away with a clear reason.
 
 Run `python quest.py 2` after each TODO.
 """
-from pydantic import BaseModel, HttpUrl, Field, ValidationError, field_validator, model_validator  # noqa: F401
+
+from pydantic import (
+    BaseModel,
+    HttpUrl,
+    Field,
+    ValidationError,
+    field_validator,
+    model_validator,
+)  # noqa: F401
 
 
 class JobPosting(BaseModel):
-    # TODO 2.1 · Add these fields:
-    #   title: str
-    #   company: str
-    #   url: HttpUrl
-    #   salary_lpa: a float or None, default None, and it can't be negative (hint: Field(default=None, ge=0))
-    #   remote: bool, default False
-    #   location: str or None, default None
-    pass
+    title: str
+    company: str
+    url: HttpUrl
+    salary_lpa: float | None = Field(default=None, ge=0)
+    remote: bool = False
+    location: str | None = None
 
-    # TODO 2.2 · Clean up the title with a @field_validator("title"):
-    #   strip spaces at both ends and squash repeated spaces inside ("  ML   Engineer " -> "ML Engineer").
-    #   If nothing is left, raise ValueError("title can't be empty").
+    @field_validator("title")
+    @classmethod
+    def validate_title(cls, value):
+        value = " ".join(value.split())
 
-    # TODO 2.3 · Add a @model_validator(mode="after"):
-    #   an on-site job (remote is False) must have a location.
-    #   If it's missing, raise ValueError("location is required for on-site jobs"). Return self otherwise.
+        if not value:
+            raise ValueError("title can't be empty")
+
+        return value
+
+    @model_validator(mode="after")
+    def validate_location(self):
+        if not self.remote and not self.location:
+            raise ValueError("location is required for on-site jobs")
+
+        return self
 
 
 def parse_postings(raw: list[dict]) -> tuple[list[JobPosting], list[str]]:
-    """TODO 2.4 · Validate every record.
+    valid_postings = []
+    errors = []
 
-    Return (valid_postings, errors). For each bad record add ONE error string, using the first error
-    Pydantic reports, in this exact format:  "record {index}: {field}: {message}"
-    e.g. "record 3: url: Input should be a valid URL, relative URL without a base"
-    (index starts at 0; field is the first item of the error's "loc", or "posting" if loc is empty)
-    """
-    raise NotImplementedError
+    for index, record in enumerate(raw):
+        try:
+            posting = JobPosting.model_validate(record)
+            valid_postings.append(posting)
+        except ValidationError as e:
+            error = e.errors()[0]
+
+            field = str(error["loc"][0]) if error["loc"] else "posting"
+            message = error["msg"]
+
+            errors.append(f"record {index}: {field}: {message}")
+    return valid_postings, errors
