@@ -23,9 +23,9 @@ same 10 messy records at your code that the scrapers would.
 
 ## Done means
 
-- [ ] `python quest.py 2` is all green (4 checks)
-- [ ] You can explain why `"24"` becomes `24.0` for the salary, but `"yes"` for `remote` gets rejected
-- [ ] You can say when to use a field validator and when you need a model validator
+- [x] `python quest.py 2` is all green (4 checks)
+- [x] You can explain why `"24"` becomes `24.0` for the salary, but `"yes"` for `remote` gets rejected
+- [x] You can say when to use a field validator and when you need a model validator
 
 ## Run it
 
