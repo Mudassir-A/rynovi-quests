@@ -24,9 +24,9 @@ code and count how many fetches ran at once, so a sneaky one-by-one loop won't p
 
 ## Done means
 
-- [ ] `python quest.py 3` is all green (4 checks)
-- [ ] You can explain why 20 pages take about the same time as one when you use `gather`
-- [ ] You can say why you'd cap the number of requests even when your code could send them all at once
+- [x] `python quest.py 3` is all green (4 checks)
+- [x] You can explain why 20 pages take about the same time as one when you use `gather`
+- [x] You can say why you'd cap the number of requests even when your code could send them all at once
 
 ## Run it
 

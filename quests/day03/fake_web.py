@@ -14,7 +14,7 @@ def reset() -> None:
     global running, max_running
     running = max_running = 0
 
-
+    
 async def fetch(url: str) -> str:
     global running, max_running
     running += 1
